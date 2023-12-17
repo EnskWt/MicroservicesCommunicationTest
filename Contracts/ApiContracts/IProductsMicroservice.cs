@@ -10,7 +10,7 @@ namespace Contracts.ApiContracts
     public interface IProductsMicroservice : IClient
     {
         [HttpGet("/productsGet")]
-        Task<ActionResult<List<int>>> GetProductsAsyncGet(int test);
+        Task<ActionResult> GetProductsAsyncGet(int test);
 
         [HttpPost("/productsPost")]
         Task<ActionResult<List<int>>> GetProductsAsyncPost([FromBody] Test test);

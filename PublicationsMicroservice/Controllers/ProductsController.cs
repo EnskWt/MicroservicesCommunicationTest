@@ -9,11 +9,12 @@ namespace PublicationsMicroservice.Controllers
     {
         // if get method you must use [FromBody] for now
         [HttpGet("/productsGet")]
-        public async Task<ActionResult<List<int>>> GetProductsAsyncGet([FromBody] int test)
+        public async Task<ActionResult> GetProductsAsyncGet([FromBody] int test)
         {
             if (test == 1)
             {
-                return Ok(new List<int> { 1, 2, 3 });
+                //return Ok(new List<int> { 1, 2, 3 });
+                return Ok();
             }
             else
             {

@@ -34,8 +34,8 @@ builder.Services.AddHttpClient("ProductsMicroservice", client =>
 builder.Services.AddScoped<IProductsMicroservice>(provider =>
 {
     var httpClient = provider.GetRequiredService<IHttpClientFactory>().CreateClient("ProductsMicroservice");
-    var universalClient = ProxyFactory<IProductsMicroservice>.Create(httpClient);
-    return universalClient;
+    var proxy = ProxyFactory<IProductsMicroservice>.Create(httpClient);
+    return proxy;
 });
 
 var app = builder.Build();

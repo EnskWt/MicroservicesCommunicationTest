@@ -15,7 +15,7 @@ namespace Contracts
 
         // TODO: divide into multiple methods
         // TODO: add support for GET request query parameters
-        protected override object Invoke(MethodInfo? targetMethod, object?[]? args)
+        protected override object? Invoke(MethodInfo? targetMethod, object?[]? args)
         {
             var httpMethodAttribute = targetMethod!.GetCustomAttributes(typeof(HttpMethodAttribute), false).FirstOrDefault() as HttpMethodAttribute;
 
@@ -52,11 +52,18 @@ namespace Contracts
             var response = _httpClient!.SendAsync(request).Result;
 
             //***********To handle answer from microservice***********
-            var message = response.Content.ReadAsStringAsync().Result;
+            var responseContent = response.Content.ReadAsStringAsync().Result;
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
-                throw new Exception(message);
+                throw new Exception(responseContent);
+            }
+
+            // maybe for some handling of empty OK() reponse
+            // maybe scale it for other status codes
+            if (response.StatusCode == HttpStatusCode.OK && responseContent == string.Empty)
+            {
+                return Task.FromResult<ActionResult>(new OkResult());
             }
 
 
@@ -65,7 +72,8 @@ namespace Contracts
             //var response = _httpClient!.SendAsync(new HttpRequestMessage(new HttpMethod(httpMethod!), requestUri)).Result;
             //response.EnsureSuccessStatusCode();
 
-            var jsonString = response.Content.ReadAsStringAsync().Result;
+            
+
             var resultType = targetMethod.ReturnType.GetGenericArguments()[0];
 
             // *********** For ActionResult<T> ***********
@@ -75,7 +83,12 @@ namespace Contracts
                 resultType = resultType.GetGenericArguments()[0];
             }
 
-            var result = JsonConvert.DeserializeObject(jsonString, resultType);
+            var result = JsonConvert.DeserializeObject(responseContent, resultType);
+
+            if (result == null)
+            {
+                throw new InvalidOperationException("The method must have a return value.");
+            }
 
             //TODO: check and validate result
 

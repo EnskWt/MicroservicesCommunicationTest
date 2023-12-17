@@ -24,12 +24,12 @@ namespace AuthorsMicroservice.Controllers
         }
 
         [HttpGet("/test")]
-        public async Task<ActionResult<List<int>>> GetProducts(int value, int method)
+        public async Task<ActionResult<List<int>>>? GetProducts(int value, int method)
         {
             if (method == 1)
             {
                 var result = await _productsMicroservice.GetProductsAsyncGet(value);
-                return Ok(result);
+                return result;
             }
             else
             {
